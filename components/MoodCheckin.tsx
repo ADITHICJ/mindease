@@ -21,15 +21,16 @@ export default function MoodCheckin({ onSelectMood }: { onSelectMood?: (mood: st
   };
 
   return (
-    <div className="p-4 bg-white rounded-2xl shadow-md max-w-md mx-auto">
+    <div className="p-6 bg-white rounded-2xl shadow-md w-full">
       <h2 className="text-xl font-semibold mb-4 text-center">How are you feeling today?</h2>
 
-      <div className="grid grid-cols-3 gap-4">
+      {/* Full-width horizontal scroll */}
+      <div className="flex gap-4 overflow-x-auto pb-2 w-full">
         {moods.map((m) => (
           <button
             key={m.label}
             onClick={() => handleSelect(m.label)}
-            className={`flex flex-col items-center p-4 rounded-xl border 
+            className={`flex flex-col items-center justify-center min-w-[100px] p-4 rounded-xl border 
               transition-all hover:scale-105
               ${selectedMood === m.label ? "bg-blue-100 border-blue-600" : "bg-gray-100"}`}
           >

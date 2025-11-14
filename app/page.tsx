@@ -1,250 +1,366 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import {
+  Brain,
+  Heart,
+  Shield,
+  MessageCircle,
+  Sparkles,
+  LineChart,
+  Waves,
+  Check,
+  ArrowRight,
+  HeartPulse,
+  Lightbulb,
+  Lock,
+  MessageSquareHeart,
+} from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Slider } from "@/components/ui/slider";
+import { useState, useEffect } from "react";
+import {
 
-export default function HomePage() {
-  const supabase = createClient();
-  const [user, setUser] = useState<any>(null);
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import React from "react";
+import { Ripple } from "@/components/ui/ripple";
+
+export default function Home() {
+  const emotions = [
+    { value: 0, label: "😔 Down", color: "from-blue-500/50" },
+    { value: 25, label: "😊 Content", color: "from-green-500/50" },
+    { value: 50, label: "😌 Peaceful", color: "from-purple-500/50" },
+    { value: 75, label: "🤗 Happy", color: "from-yellow-500/50" },
+    { value: 100, label: "✨ Excited", color: "from-pink-500/50" },
+  ];
+
+  const [emotion, setEmotion] = useState(50);
+  const [mounted, setMounted] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const welcomeSteps = [
+    {
+      title: "Hi, I'm Aura 👋",
+      description:
+        "Your AI companion for emotional well-being. I'm here to provide a safe, judgment-free space for you to express yourself.",
+      icon: Waves,
+    },
+    {
+      title: "Personalized Support 🌱",
+      description:
+        "I adapt to your needs and emotional state, offering evidence-based techniques and gentle guidance when you need it most.",
+      icon: Brain,
+    },
+    {
+      title: "Your Privacy Matters 🛡️",
+      description:
+        "Our conversations are completely private and secure. I follow strict ethical guidelines and respect your boundaries.",
+      icon: Shield,
+    },
+  ];
 
   useEffect(() => {
-    async function loadUser() {
-      const { data } = await supabase.auth.getUser();
-      setUser(data?.user ?? null);
-    }
-    loadUser();
+    setMounted(true);
   }, []);
 
-  const tools = [
+  const currentEmotion =
+    emotions.find((em) => Math.abs(emotion - em.value) < 15) || emotions[2];
+
+  const features = [
     {
-      id: "mood",
-      title: "Mood Check-in",
-      desc: "Quick daily mood logging with emojis and short notes — see trends over time.",
-      href: "/mood-checkin",
-      icon: (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-          <path d="M8 13s1.5 2 4 2 4-2 4-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-          <path d="M9 9h.01M15 9h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-        </svg>
-      ),
+      icon: HeartPulse,
+      title: "24/7 Support",
+      description: "Always here to listen and support you, any time of day",
+      color: "from-rose-500/20",
+      delay: 0.2,
     },
     {
-      id: "chatbot",
-      title: "Chatbot",
-      desc: "Talk confidentially with an AI companion for reflections, prompts, and coping suggestions.",
-      href: "/chat",
-      icon: (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-        </svg>
-      ),
+      icon: Lightbulb,
+      title: "Smart Insights",
+      description: "Personalized guidance powered by emotional intelligence",
+      color: "from-amber-500/20",
+      delay: 0.4,
     },
     {
-      id: "breathing",
-      title: "Breathing Exercise",
-      desc: "Guided breathing sessions (box, 4-4-4, or paced) to calm your nervous system.",
-      href: "/breathing",
-      icon: (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M12 3v18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-          <path d="M5 7a7 7 0 0114 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-          <path d="M5 17a7 7 0 0114 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-        </svg>
-      ),
+      icon: Lock,
+      title: "Private & Secure",
+      description: "Your conversations are always confidential and encrypted",
+      color: "from-emerald-500/20",
+      delay: 0.6,
     },
     {
-      id: "audio",
-      title: "Audio",
-      desc: "Curated meditation & soundscapes — short and long options for focus and sleep.",
-      href: "/audio",
-      icon: (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M9 9v6a3 3 0 006 0V9a3 3 0 00-6 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-          <path d="M5 12h.01M19 12h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-        </svg>
-      ),
-    },
-    {
-      id: "video",
-      title: "Video",
-      desc: "Guided practices and short lessons — watch at your pace to learn tools and techniques.",
-      href: "/video",
-      icon: (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M23 7l-7 5 7 5V7z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-          <rect x="1" y="5" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"></rect>
-        </svg>
-      ),
-    },
-    {
-      id: "analytics",
-      title: "Mood Analytics",
-      desc: "Visualize mood trends, triggers, and improvements with easy charts and insights.",
-      href: "/analytics",
-      icon: (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M3 3v18h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-          <path d="M7 13v5M12 9v9M17 5v13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-        </svg>
-      ),
+      icon: MessageSquareHeart,
+      title: "Evidence-Based",
+      description: "Therapeutic techniques backed by clinical research",
+      color: "from-blue-500/20",
+      delay: 0.8,
     },
   ];
 
   return (
-    <main className="min-h-screen w-full font-sans text-gray-800">
-      {/* Header */}
-      <Header />
-
+    <div className="flex flex-col min-h-screen overflow-hidden">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 w-full flex flex-col md:flex-row items-center px-6 md:px-16 gap-10">
-        
-        {/* Image Left */}
-        <div className="w-full md:w-1/2 flex justify-center md:justify-start">
-          <img
-            src="/home1.jpg"
-            alt="Meditation Illustration"
-            className="w-80 md:w-full max-w-sm"
+      <section className="relative min-h-[90vh] mt-20 flex flex-col items-center justify-center py-12 px-4">
+        {/* Enhanced background elements */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div
+            className={`absolute w-[500px] h-[500px] rounded-full blur-3xl top-0 -left-20 transition-all duration-700 ease-in-out
+            bg-gradient-to-r ${currentEmotion.color} to-transparent opacity-60`}
           />
+          <div className="absolute w-[400px] h-[400px] rounded-full bg-secondary/10 blur-3xl bottom-0 right-0 animate-pulse delay-700" />
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-3xl" />
         </div>
+        <Ripple className="opacity-60" />
 
-        {/* Text Right */}
-        <div className="w-full md:w-1/2 text-center md:text-left">
-          <h1 className="text-4xl font-bold leading-snug max-w-xl">
-            Your safe space for emotional wellbeing.
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="relative space-y-8 text-center"
+        >
+          {/* Enhanced badge with subtle animation */}
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm border border-primary/20 bg-primary/5 backdrop-blur-sm hover:border-primary/40 transition-all duration-300">
+            <Waves className="w-4 h-4 animate-wave text-primary" />
+            <span className="relative text-foreground/90 dark:text-foreground after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-primary/30 after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">
+              Your AI Agent Mental Health Companion
+            </span>
+          </div>
+
+          {/* Enhanced main heading with smoother gradient */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-plus-jakarta tracking-tight">
+            <span className="inline-block bg-gradient-to-r from-primary via-primary/90 to-secondary bg-clip-text text-transparent [text-shadow:_0_1px_0_rgb(0_0_0_/_20%)] hover:to-primary transition-all duration-300">
+              Find Peace
+            </span>
+            <br />
+            <span className="inline-block mt-2 bg-gradient-to-b from-foreground to-foreground/90 bg-clip-text text-transparent">
+              of Mind
+            </span>
           </h1>
-          <p className="text-gray-600 mt-4 max-w-md">
-            Support for stress, anxiety, clarity, and inner balance.
+
+          {/* Enhanced description with better readability */}
+          <p className="max-w-[600px] mx-auto text-base md:text-lg text-muted-foreground leading-relaxed tracking-wide">
+            Experience a new way of emotional support. Our AI companion is here
+            to listen, understand, and guide you through life's journey.
           </p>
 
-          <div className="flex justify-center md:justify-start space-x-4 mt-6">
-            {!user ? (
-              <>
-                <a
-                  href="/sign-up"
-                  className="px-6 py-3 bg-blue-700 text-white rounded-md hover:bg-blue-800"
-                >
-                  Get Started
-                </a>
+          {/* Emotion slider section with enhanced transitions */}
+          <motion.div
+            className="w-full max-w-[600px] mx-auto space-y-6 py-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            <div className="space-y-2 text-center">
+              <p className="text-sm text-muted-foreground/80 font-medium">
+                Whatever you're feeling, we're here to listen
+              </p>
+              <div className="flex justify-between items-center px-2">
+                {emotions.map((em) => (
+                  <div
+                    key={em.value}
+                    className={`transition-all duration-500 ease-out cursor-pointer hover:scale-105 ${
+                      Math.abs(emotion - em.value) < 15
+                        ? "opacity-100 scale-110 transform-gpu"
+                        : "opacity-50 scale-100"
+                    }`}
+                    onClick={() => setEmotion(em.value)}
+                  >
+                    <div className="text-2xl transform-gpu">
+                      {em.label.split(" ")[0]}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1 font-medium">
+                      {em.label.split(" ")[1]}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-                <button className="px-6 py-3 border border-gray-300 rounded-md hover:bg-gray-100">
-                  Learn More
-                </button>
-              </>
-            ) : (
-              <a
-                href="/dashboard"
-                className="px-6 py-3 bg-blue-700 text-white rounded-md hover:bg-blue-800"
+            {/* Enhanced slider with dynamic gradient */}
+            <div className="relative px-2">
+              <div
+                className={`absolute inset-0 bg-gradient-to-r ${currentEmotion.color} to-transparent blur-2xl -z-10 transition-all duration-500`}
+              />
+              <Slider
+                value={[emotion]}
+                onValueChange={(value) => setEmotion(value[0])}
+                min={0}
+                max={100}
+                step={1}
+                className="py-4"
+              />
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground animate-pulse">
+                Slide to express how you're feeling today
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Enhanced CTA button and welcome dialog */}
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+          >
+            <Button
+              size="lg"
+              onClick={() => setShowDialog(true)}
+              className="relative group h-12 px-8 rounded-full bg-gradient-to-r from-primary via-primary/90 to-secondary hover:to-primary shadow-lg shadow-primary/20 transition-all duration-500 hover:shadow-xl hover:shadow-primary/30"
+            >
+              <span className="relative z-10 font-medium flex items-center gap-2">
+                Begin Your Journey
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </span>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-size-200 bg-pos-0 group-hover:bg-pos-100" />
+            </Button>
+          </motion.div>
+        </motion.div>
+
+        {/* Enhanced scroll indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+        >
+          <div className="w-6 h-10 rounded-full border-2 border-primary/20 flex items-start justify-center p-1 hover:border-primary/40 transition-colors duration-300">
+            <div className="w-1 h-2 rounded-full bg-primary animate-scroll" />
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Enhanced Features Grid */}
+      <section className="relative py-20 px-4 overflow-hidden">
+        {/* <div className="absolute inset-0 bg-gradient-to-b from-background via-background/50 to-background" /> */}
+
+        <div className="max-w-6xl mx-auto">
+          <motion.div className="text-center mb-16 space-y-4 text-white ">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-primary/90 to-primary bg-clip-text text-transparent dark:text-primary/90">
+              How Aura Helps You
+            </h2>
+            <p className="text-foreground dark:text-foreground/95 max-w-2xl mx-auto font-medium text-lg">
+              Experience a new kind of emotional support, powered by empathetic
+              AI
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: feature.delay, duration: 0.5 }}
+                viewport={{ once: true }}
               >
-                Continue Your Journey
-              </a>
-            )}
+                <Card className="group relative overflow-hidden border border-primary/10 hover:border-primary/20 transition-all duration-300 h-[200px] bg-card/30 dark:bg-card/80 backdrop-blur-sm">
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${feature.color} to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-500 dark:group-hover:opacity-30`}
+                  />
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-xl bg-primary/10 dark:bg-primary/20 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors duration-300">
+                        <feature.icon className="w-5 h-5 text-primary dark:text-primary/90" />
+                      </div>
+                      <h3 className="font-semibold tracking-tight text-foreground/90 dark:text-foreground">
+                        {feature.title}
+                      </h3>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground/90 dark:text-muted-foreground leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/20 dark:via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Subtext Section */}
-      <section className="w-full flex flex-col items-center text-center px-6 mt-10">
-        <h2 className="text-2xl font-bold">
-          Navigating Emotional Life Can Be Tough
-        </h2>
-        <p className="text-gray-600 max-w-2xl mt-4">
-          MindEase helps you build emotional resilience with tools grounded in
-          science, psychology, and mindfulness.
-        </p>
-
-        <div className="bg-blue-50 border border-blue-200 rounded-lg px-6 py-4 mt-6 max-w-xl">
-          <p className="text-blue-800 font-medium">MindEase is here to help.</p>
-        </div>
-      </section>
-
-      {/* Tools Section (Updated) */}
-      <section id="tools" className="w-full mt-20 px-6 md:px-10">
-        <h2 className="text-2xl font-bold text-center mb-8">
-          Toolkit for Your Wellbeing Journey
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tools.map((tool) => (
-            <div
-              key={tool.id}
-              className="flex flex-col justify-between border rounded-lg p-6 shadow-sm hover:shadow-lg transition-all bg-white"
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className="sm:max-w-[425px] bg-card/80 backdrop-blur-lg">
+          <DialogHeader>
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-4"
             >
-              <div className="flex items-start space-x-4">
-                <div className="p-3 rounded-md bg-blue-50 text-blue-700">
-                  {tool.icon}
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">{tool.title}</h3>
-                  <p className="text-gray-600 text-sm mt-2">{tool.desc}</p>
-                </div>
+              <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                {welcomeSteps[currentStep] && (
+                  <div>
+                    {React.createElement(welcomeSteps[currentStep].icon, {
+                      className: "w-8 h-8 text-primary",
+                    })}
+                  </div>
+                )}
               </div>
-
-              <div className="mt-6 flex items-center justify-between">
-                <a
-                  href={tool.href}
-                  className="text-sm font-medium px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800"
-                  aria-label={`Open ${tool.title}`}
-                >
-                  Open
-                </a>
-
-                <a
-                  href={tool.href}
-                  className="text-sm text-blue-700 underline hidden sm:inline-block"
-                >
-                  Learn more
-                </a>
-              </div>
+              <DialogTitle className="text-2xl text-center">
+                {welcomeSteps[currentStep]?.title}
+              </DialogTitle>
+              <DialogDescription className="text-center text-base leading-relaxed">
+                {welcomeSteps[currentStep]?.description}
+              </DialogDescription>
+            </motion.div>
+          </DialogHeader>
+          <div className="flex justify-between items-center mt-8">
+            <div className="flex gap-2">
+              {welcomeSteps.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === currentStep ? "bg-primary w-4" : "bg-primary/20"
+                  }`}
+                />
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+            <Button
+              onClick={() => {
+                if (currentStep < welcomeSteps.length - 1) {
+                  setCurrentStep((c) => c + 1);
+                } else {
+                  setShowDialog(false);
+                  setCurrentStep(0);
+                  // Here you would navigate to the chat interface
+                }
+              }}
+              className="relative group px-6"
+            >
+              <span className="flex items-center gap-2">
+                {currentStep === welcomeSteps.length - 1 ? (
+                  <>
+                    Let's Begin
+                    <Sparkles className="w-4 h-4 animate-pulse" />
+                  </>
+                ) : (
+                  <>
+                    Next
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                  </>
+                )}
+              </span>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-      {/* Emotional Resilience Section */}
-      <section className="w-full mt-20 px-10 flex flex-col md:flex-row items-center gap-10">
-        <img
-          src="/calmocean.jpg"
-          alt="Calm Ocean"
-          className="w-full md:w-1/2 rounded-lg shadow-md"
-        />
-
-        <div className="w-full md:w-1/2">
-          <h2 className="text-2xl font-bold mb-4">
-            Build Lasting Emotional Resilience
-          </h2>
-          <ul className="text-gray-700 space-y-3 list-disc list-inside">
-            <li>Daily mindfulness reminders</li>
-            <li>Track mood & emotional patterns</li>
-            <li>AI-guided reflections</li>
-            <li>Healthy habit formation</li>
-            <li>Learn coping strategies</li>
-          </ul>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="w-full mt-20 px-10 mb-28">
-        <h2 className="text-2xl font-bold text-center mb-10">
-          Frequently Asked Questions
-        </h2>
-
-        <div className="max-w-2xl mx-auto space-y-4">
-          {[1, 2, 3, 4].map((i) => (
-            <details key={i} className="border rounded-lg p-4 cursor-pointer">
-              <summary className="font-medium">Sample question #{i}?</summary>
-              <p className="mt-2 text-gray-600 text-sm">
-                This is a sample answer for the FAQ.
-              </p>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <Footer />
-    </main>
+      {/* Add custom animations to globals.css */}
+    </div>
   );
 }

@@ -1,93 +1,96 @@
 "use client";
 
 import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import Header from "@/components/Header";
+import MoodCheckin from "@/components/MoodCheckin";
+import Footer from "@/components/Footer";
 
-const moods = [
-  { emoji: "😊", label: "Happy" },
-  { emoji: "😔", label: "Sad" },
-  { emoji: "😤", label: "Stressed" },
-  { emoji: "😌", label: "Calm" },
-  { emoji: "🤔", label: "Thoughtful" },
-  { emoji: "🥳", label: "Excited" },
-  { emoji: "😴", label: "Tired" },
-];
+export default function Dashboard() {
+  const [mood, setMood] = useState("");
+  const [quote, setQuote] = useState("");
 
-export default function MoodCheckIn() {
-  const [step, setStep] = useState(1);
-  const [selectedMood, setSelectedMood] = useState("");
-  const [note, setNote] = useState("");
+  const quotes = [
+    "You are stronger than you think.",
+    "Take a deep breath. You got this.",
+    "Small steps every day lead to big results.",
+    "Your feelings are valid.",
+    "You are doing better than you think.",
+  ];
+
+  const generateQuote = () => {
+    const random = quotes[Math.floor(Math.random() * quotes.length)];
+    setQuote(random);
+  };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-3xl shadow-lg border border-gray-200 transition-all duration-300">
-      {step === 1 ? (
-        <div className="animate-fadeIn">
-          <h2 className="text-2xl font-semibold text-center text-gray-800">
-            How are you feeling today?
-          </h2>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Header />
 
-          <div className="flex gap-4 overflow-x-auto mt-6 py-2 scrollbar-none">
-            {moods.map((m) => (
-              <button
-                key={m.label}
-                onClick={() => {
-                  setSelectedMood(m.label);
-                  setStep(2);
-                }}
-                className={`min-w-[95px] p-4 rounded-2xl border flex flex-col items-center shadow-sm transition-all hover:scale-105
-                ${
-                  selectedMood === m.label
-                    ? "bg-blue-100 border-blue-600"
-                    : "bg-gray-100 border-gray-300"
-                }`}
-              >
-                <span className="text-4xl">{m.emoji}</span>
-                <span className="text-sm mt-2 text-gray-700 font-medium">
-                  {m.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="animate-fadeIn">
-          <h2 className="text-xl font-semibold text-center text-gray-800">
-            You're feeling {selectedMood}!
-          </h2>
+      <div className="max-w-3xl mx-auto w-full p-4 mt-8">
+        <Card className="p-4 bg-white shadow rounded-xl">
+          <CardContent className="text-center">
+            <p className="text-lg font-semibold">🔥 5-Day Streak</p>
+            <p className="text-gray-600 text-sm">
+              Keep going! You're building a great habit.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-          <p className="text-center text-gray-500 mt-1">
-            Want to add a short note? (optional)
+      <main className="flex-1 max-w-3xl mx-auto w-full p-4 space-y-6">
+        {/* Streak Box */}
+
+        {/* Mood Check-in */}
+        <MoodCheckin onSelectMood={(m) => setMood(m)} />
+
+        {/* Random Quote Generator */}
+        <Card className="p-4 bg-white shadow rounded-xl">
+          <CardContent className="space-y-3 text-center">
+            <h3 className="font-semibold text-lg">✨ Random Motivation</h3>
+            {quote && <p className="text-gray-700 italic">“{quote}”</p>}
+            <button
+              onClick={generateQuote}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              Generate Quote
+            </button>
+          </CardContent>
+        </Card>
+
+        {/* Personalized AI Recommendation */}
+        <Card className="p-4 shadow rounded-xl bg-white">
+          <h3 className="font-semibold text-lg mb-2">
+            🤖 Personalized Recommendation
+          </h3>
+          <p className="text-gray-600 text-sm">
+            Based on your recent moods, we will soon show personalized mental
+            wellness tips, breathing exercises, journaling prompts, and coping
+            strategies.
           </p>
+        </Card>
 
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={4}
-            placeholder="Why do you feel this way?"
-            className="w-full mt-4 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition-all"
-          />
+        {/* Cards row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="p-4 bg-white shadow rounded-xl">
+            <h3 className="font-semibold text-lg mb-2">
+              🧘 Breathing Exercises
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Quick 2–5 minute guided breathing for instant calm.
+            </p>
+          </Card>
 
-          <button
-            onClick={() => alert(`Saved mood: ${selectedMood}\nNote: ${note}`)}
-            className="w-full mt-5 bg-blue-600 text-white py-3 rounded-xl shadow-md hover:bg-blue-700 transition-all"
-          >
-            Save Mood
-          </button>
-
-          <button
-            onClick={() => alert(`Saved mood: ${selectedMood}`)}
-            className="w-full text-blue-600 mt-3 hover:underline"
-          >
-            Skip & Save →
-          </button>
-
-          <button
-            onClick={() => setStep(1)}
-            className="w-full text-gray-600 mt-4 hover:underline"
-          >
-            ← Back
-          </button>
+          <Card className="p-4 bg-white shadow rounded-xl">
+            <h3 className="font-semibold text-lg mb-2">📔 Journaling</h3>
+            <p className="text-gray-600 text-sm">
+              Reflect on your thoughts with guided prompts.
+            </p>
+          </Card>
         </div>
-      )}
+      </main>
+
+      <Footer />
     </div>
   );
 }
