@@ -25,6 +25,7 @@ export default function SignUpPage() {
         <h1 className="text-2xl font-bold text-center">Create Account</h1>
 
         {/* Supabase Email/Password + Google */}
+        <div suppressHydrationWarning>
         <Auth
           supabaseClient={supabase}
           view="sign_up"
@@ -34,6 +35,7 @@ export default function SignUpPage() {
             typeof window !== "undefined" ? window.location.origin : undefined
           }
         />
+        </div>
 
         {/* Anonymous Signup */}
         <button
