@@ -57,7 +57,6 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full flex">
-
         {/* Left Illustration */}
         <div className="hidden md:flex md:w-1/2 bg-blue-50 items-center justify-center p-12">
           <img
@@ -70,7 +69,6 @@ export default function SignInPage() {
         {/* Right Side - Form */}
         <div className="w-full md:w-1/2 p-12">
           <div className="max-w-md mx-auto">
-
             <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">
               Welcome Back
             </h2>
@@ -80,7 +78,6 @@ export default function SignInPage() {
 
             {/* EMAIL LOGIN FORM */}
             <form onSubmit={handleLogin} className="space-y-5">
-
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -141,12 +138,19 @@ export default function SignInPage() {
             <button
               onClick={handleGoogleLogin}
               disabled={googleLoading}
-              className="w-full mt-6 bg-white border border-gray-300 py-3 rounded-lg 
-              font-medium hover:bg-gray-50 transition flex items-center justify-center gap-3"
+              className="w-full mt-6 flex items-center justify-center gap-3 
+             border border-gray-300 bg-white 
+             text-gray-700 font-medium py-2.5 rounded-xl
+             shadow-sm hover:bg-gray-50 transition
+             disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26..." />
-              </svg>
+              {/* Google Icon */}
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                className="w-5 h-5"
+              />
+
               {googleLoading ? "Connecting..." : "Continue with Google"}
             </button>
 
@@ -163,14 +167,15 @@ export default function SignInPage() {
             {/* Redirect Link */}
             <p className="mt-8 text-center text-sm text-gray-600">
               Don’t have an account?{" "}
-              <a href="/sign-up" className="text-teal-600 hover:underline font-medium">
+              <a
+                href="/sign-up"
+                className="text-teal-600 hover:underline font-medium"
+              >
                 Create one
               </a>
             </p>
-
           </div>
         </div>
-
       </div>
     </div>
   );
